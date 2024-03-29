@@ -44,6 +44,13 @@ class LSRouter(Router):
             return
         elif self.clock.read_tick() < BROADCAST_INTERVAL:
             # TODO: Go through the LSAs received so far.
+
+
+            for router, ad in self.lsa_dict.items():
+                if self.broadcasted[router] == False:
+                    for neighbor in self.neighbors:
+                        self.send(neighbor, ad, router)
+                    self.broadcasted[router] = True
             # broadcast each LSA to this router's neighbors if the LSA has not been broadcasted yet
             pass
         else:
@@ -58,6 +65,43 @@ class LSRouter(Router):
 
     def dijkstras_algorithm(self):
         # TODO:
+
+        not_visited = self.lsa_dict.keys()
+        distances = {router: float('inf') for router in self.lsa_dict.keys()}
+        distances[self.router_id] = 0
+
+        current_router = self
+        for router, dst in current_router.links.items():
+            distances[router] = dst
+       
+        while not_visited:
+            min = float('inf')
+            min_router = None
+            for router, dst in current_router.links.items():
+                if dst < min:
+                    min = dst
+                    min_router = self.lsa_dict[router]
+            
+            if not min_router:
+                break
+            
+            for router, dst in min_router.links.items():
+                if dst + distances[min_router.router_id] < distances[router]:
+                    distances[router] = dst + distances[min_router.router_id]
+                    if min_router.router_id in self.links.keys():
+                        self.fwd_table[router] = min_router.router_id
+            
+            not_visited.remove(min_router)
+            current_router = min_router
+
+        self.routes_computed = True
+            
+
+
+
+        
+        
+
         # (1) Implement Dijkstra's single-source shortest path algorithm
         # to find the shortest paths from this router to all other destinations in the network.
         # Feel free to use a different shortest path algo. if you're more comfortable with it.
