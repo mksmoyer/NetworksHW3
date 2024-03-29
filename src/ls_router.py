@@ -89,7 +89,7 @@ class LSRouter(Router):
             for router, dst in min_router.items():
                 if dst + distances[min_id] < distances[router]:
                     distances[router] = dst + distances[min_id]
-                    if min_id in self.links.keys():
+                    if min_id in self.lsa_dict.keys():
                         self.fwd_table[router] = min_id
 
             not_visited.remove(min_id)
