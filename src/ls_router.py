@@ -126,7 +126,7 @@ class LSRouter(Router):
         # populate forwarding table using prev dictionary 
         # and the recursive next_hop function
         for router in self.lsa_dict.keys():
-            if router != self.router_id and prev[router]] != -1:
+            if router != self.router_id and prev[router] != -1:
                 next_hop_router = self.next_hop(router, prev)
                 self.fwd_table[router] = next_hop_router
 
