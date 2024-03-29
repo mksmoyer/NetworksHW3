@@ -92,7 +92,7 @@ class LSRouter(Router):
                     if min_id in self.links.keys():
                         self.fwd_table[router] = min_id
             
-            not_visited.remove(min_router)
+            not_visited.remove(min_id)
             current_router = min_router
 
         self.routes_computed = True
