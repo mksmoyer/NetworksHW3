@@ -69,6 +69,9 @@ class LSRouter(Router):
         not_visited = list(self.lsa_dict.keys())
         distances = {router: float('inf') for router in self.lsa_dict.keys()}
         distances[self.router_id] = 0
+        min = float('inf')
+        for router, dst in self.links.items():
+            self.fwd_table[router] = dst
 
         while not_visited:
             min_distance = float('inf')
