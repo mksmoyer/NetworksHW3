@@ -44,14 +44,19 @@ class LSRouter(Router):
             return
         elif self.clock.read_tick() < BROADCAST_INTERVAL:
             # TODO: Go through the LSAs received so far.
+            # broadcast each LSA to this router's neighbors if the LSA has not been broadcasted yet
 
-
+            #lsa_dict is a table of router IDs mapping to advertisements
             for router, ad in self.lsa_dict.items():
+                # If we have not broadcasted or we are looking at a router who's ad has not been broadcasted,
+                # then we broadcast the ad and the router it came from
                 if not router in self.broadcasted.keys() or self.broadcasted[router] == False:
+                    # broadcast each previously unbroadcasted ad to all neighbors
                     for neighbor in self.neighbors:
                         self.send(neighbor, ad, router)
+                    # after sending to all neighbors, mark that ad as broadcasted
                     self.broadcasted[router] = True
-            # broadcast each LSA to this router's neighbors if the LSA has not been broadcasted yet
+            
             pass
         else:
             return
@@ -73,27 +78,37 @@ class LSRouter(Router):
         # (3) If it helps, you can use the helper function next_hop below to compute the next hop once you
         # have populated the prev dictionary which maps a destination to the penultimate hop
         # on the shortest path to this destination from this router.
+
+        # initialize set of not visited routers with all routers in lsa_dict because we haven't started,
+        # so none are visited yet
         not_visited = set(self.lsa_dict.keys())
+
+        # initialize distances as infinity (for min comparisons)
+        # initialize prev as -1 for all routers to show that none are connected as part of the shortest path yet
         distances = {}
         prev = {} 
         for router in self.lsa_dict.keys():
             distances[router] = float('inf')
             prev[router] = -1
+        # initialize distance to self as 0
         distances[self.router_id] = 0
 
 
-        # Dijkstra's algorithm
+        # Dijkstra's algorithm iterates until not_visited is empty, 
+        # in other words until all routers have been visited
         while not_visited:
             # Find the router with the minimum distance
             min_distance = float('inf')
             min_router = None
+
+            # Initially this will be self because all others are infinity, 
+            # next round will be min edge from self to one of its neighbors, etc.
             for router in not_visited:
                 if distances[router] < min_distance:
                     min_distance = distances[router]
                     min_router = router
             
-            if min_router is None:
-                break
+
             
             # Mark the minimum distance router as visited
             not_visited.remove(min_router)
