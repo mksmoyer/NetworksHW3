@@ -110,23 +110,27 @@ class LSRouter(Router):
             
 
             
-            # Mark the minimum distance router as visited
+            # mark the minimum distance router as visited
             not_visited.remove(min_router)
             
-            # Update distances to neighbors
+            # update distances to neighbors of min_router by checking if going through min_router is shorter
             for neighbor, cost in self.lsa_dict[min_router].items():
                 if neighbor in not_visited:
+                    # new distance to router x is distance to min router + distance from min router to router x
                     new_distance = distances[min_router] + cost
+                    # only update with new distance if it less than old distance
                     if new_distance < distances[neighbor]:
                         distances[neighbor] = new_distance
                         prev[neighbor] = min_router
         
-        # Populate forwarding table using prev dictionary
-        for dst in self.lsa_dict.keys():
-            if dst != self.router_id and prev[dst] != -1:
-                next_hop_router = self.next_hop(dst, prev)
-                self.fwd_table[dst] = next_hop_router
+        # populate forwarding table using prev dictionary 
+        # and the recursive next_hop function
+        for router in self.lsa_dict.keys():
+            if router != self.router_id and prev[router]] != -1:
+                next_hop_router = self.next_hop(router, prev)
+                self.fwd_table[router] = next_hop_router
 
+        # set routes_computed as True after visiting all routers and updating forwarding table for all routers
         self.routes_computed = True
 
         pass
