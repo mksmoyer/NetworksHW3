@@ -47,7 +47,7 @@ class LSRouter(Router):
 
 
             for router, ad in self.lsa_dict.items():
-                if self.broadcasted[router] == False:
+                if not router in self.broadcasted.keys() or self.broadcasted[router] == False:
                     for neighbor in self.neighbors:
                         self.send(neighbor, ad, router)
                     self.broadcasted[router] = True
