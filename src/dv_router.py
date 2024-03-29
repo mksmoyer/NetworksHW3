@@ -49,11 +49,11 @@ class DVRouter(Router):
         for dest in self.dv.keys():
         # If this destination is also in the dv_adv that you just received,
         # check if you can find a better path to the destination through adv_router
-            if dest in dv_adv:
-                new_cost = self.links[adv_router.router_id] + adv_router.dv[dest]
+            if dest in dv_adv.keys():
+                new_cost = self.links[adv_router] + dv_adv[dest]
                 if new_cost < self.dv[dest]:
                     self.dv[dest] = new_cost
-                    self.fwd_table[dest] = adv_router.router_id
+                    self.fwd_table[dest] = adv_router
 
 
 
@@ -64,8 +64,8 @@ class DVRouter(Router):
         # to use adv_router because the current distance is infinity.
         for dest in dv_adv.keys():
             if not dest in self.dv.keys():
-                self.dv[dest] = self.links[adv_router.router_id] + dv_adv[dest]
-                self.fwd_table[dest] = adv_router.router_id
+                self.dv[dest] = self.links[adv_router] + dv_adv[dest]
+                self.fwd_table[dest] = adv_router
 
         
         # (3) Make sure you update self.fwd_table[dst] to reflect the current best choice
