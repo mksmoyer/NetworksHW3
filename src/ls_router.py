@@ -75,10 +75,12 @@ class LSRouter(Router):
         # on the shortest path to this destination from this router.
         not_visited = set(self.lsa_dict.keys())
         distances = {}
+        prev = {} 
         for router in self.lsa_dict.keys():
             distances[router] = float('inf')
+            prev[router] = -1
         distances[self.router_id] = 0
-        prev = {router: -1 for router in self.lsa_dict.keys()}  # Previous node on shortest path
+
 
         # Dijkstra's algorithm
         while not_visited:
