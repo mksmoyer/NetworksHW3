@@ -95,6 +95,8 @@ class LSRouter(Router):
             not_visited.remove(min_id)
 
             print (not_visited)
+            print (len(not_visited))
+            break
             
         self.routes_computed = True
 
