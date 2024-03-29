@@ -45,7 +45,7 @@ class DVRouter(Router):
     def process_advertisement(self, dv_adv, adv_router):
         # TODO: Implement this using the instructions below.
         # (1) Iterate through all destinations in this router's distance vector (self.dv).
-        self.dv_change = False
+        
 
         for dest in self.dv.keys():
         # If this destination is also in the dv_adv that you just received,
