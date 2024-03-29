@@ -66,7 +66,7 @@ class LSRouter(Router):
     def dijkstras_algorithm(self):
         # TODO:
 
-        not_visited = self.lsa_dict.keys()
+        not_visited = list(self.lsa_dict.keys())
         distances = {router: float('inf') for router in self.lsa_dict.keys()}
         distances[self.router_id] = 0
 
