@@ -45,6 +45,7 @@ class DVRouter(Router):
     def process_advertisement(self, dv_adv, adv_router):
         # TODO: Implement this using the instructions below.
         # (1) Iterate through all destinations in this router's distance vector (self.dv).
+        self.dv_change = False
 
         for dest in self.dv.keys():
         # If this destination is also in the dv_adv that you just received,
@@ -54,6 +55,7 @@ class DVRouter(Router):
                 if new_cost < self.dv[dest]:
                     self.dv[dest] = new_cost
                     self.fwd_table[dest] = adv_router
+                    self.dv_change = True
 
 
 
@@ -66,6 +68,7 @@ class DVRouter(Router):
             if not dest in self.dv.keys():
                 self.dv[dest] = self.links[adv_router] + dv_adv[dest]
                 self.fwd_table[dest] = adv_router
+                self.dv_change = True
 
         
         # (3) Make sure you update self.fwd_table[dst] to reflect the current best choice
