@@ -65,45 +65,6 @@ class LSRouter(Router):
 
     def dijkstras_algorithm(self):
         # TODO:
-
-        not_visited = list(self.lsa_dict.keys())
-        distances = {router: float('inf') for router in self.lsa_dict.keys()}
-        distances[self.router_id] = 0
-
-        for router in self.links.keys():
-            self.fwd_table[router] = router
-
-        while len(not_visited) > 0:
-            min_distance = float('inf')
-            min_router = None
-            min_id = None
-            for router in not_visited:
-                if distances[router] < min_distance:
-                    min_distance = distances[router]
-                    min_router = self.lsa_dict[router]
-                    min_id = router
-
-            if min_router is None:
-                break
-
-            for router, dst in min_router.items():
-                if dst + distances[min_id] < distances[router]:
-                    distances[router] = dst + distances[min_id]
-                    if min_id in self.lsa_dict.keys():
-                        self.fwd_table[router] = min_id
-
-            not_visited.remove(min_id)
-
-            print (not_visited)
-            print (len(not_visited))
-            break
-            
-        self.routes_computed = True
-
-
-        
-        
-
         # (1) Implement Dijkstra's single-source shortest path algorithm
         # to find the shortest paths from this router to all other destinations in the network.
         # Feel free to use a different shortest path algo. if you're more comfortable with it.
@@ -112,6 +73,43 @@ class LSRouter(Router):
         # (3) If it helps, you can use the helper function next_hop below to compute the next hop once you
         # have populated the prev dictionary which maps a destination to the penultimate hop
         # on the shortest path to this destination from this router.
+        not_visited = set(self.lsa_dict.keys())
+        distances = {router: float('inf') for router in self.lsa_dict.keys()}
+        distances[self.router_id] = 0
+        prev = {router: -1 for router in self.lsa_dict.keys()}  # Previous node on shortest path
+
+        # Dijkstra's algorithm
+        while not_visited:
+            # Find the router with the minimum distance
+            min_distance = float('inf')
+            min_router = None
+            for router in not_visited:
+                if distances[router] < min_distance:
+                    min_distance = distances[router]
+                    min_router = router
+            
+            if min_router is None:
+                break
+            
+            # Mark the minimum distance router as visited
+            not_visited.remove(min_router)
+            
+            # Update distances to neighbors
+            for neighbor, cost in self.lsa_dict[min_router].items():
+                if neighbor in not_visited:
+                    new_distance = distances[min_router] + cost
+                    if new_distance < distances[neighbor]:
+                        distances[neighbor] = new_distance
+                        prev[neighbor] = min_router
+        
+        # Populate forwarding table using prev dictionary
+        for dst in self.lsa_dict.keys():
+            if dst != self.router_id and prev[dst] != -1:
+                next_hop_router = self.next_hop(dst, prev)
+                self.fwd_table[dst] = next_hop_router
+
+        self.routes_computed = True
+
         pass
 
     # Recursive function for computing next hops using the prev dictionary
