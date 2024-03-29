@@ -74,7 +74,9 @@ class LSRouter(Router):
         # have populated the prev dictionary which maps a destination to the penultimate hop
         # on the shortest path to this destination from this router.
         not_visited = set(self.lsa_dict.keys())
-        distances = {router: float('inf') for router in self.lsa_dict.keys()}
+        distances = {}
+        for router in self.lsa_dict.keys():
+            distances[router] = float('inf')
         distances[self.router_id] = 0
         prev = {router: -1 for router in self.lsa_dict.keys()}  # Previous node on shortest path
 
