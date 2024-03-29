@@ -70,34 +70,28 @@ class LSRouter(Router):
         distances = {router: float('inf') for router in self.lsa_dict.keys()}
         distances[self.router_id] = 0
 
-        current_router = self.links
-        for router, dst in current_router.items():
-            distances[router] = dst
-       
         while not_visited:
-            min = float('inf')
+            min_distance = float('inf')
             min_router = None
-            for router, dst in current_router.items():
-                if dst < min:
-                    min = dst
+            min_id = None
+            for router in not_visited:
+                if distances[router] < min_distance:
+                    min_distance = distances[router]
                     min_router = self.lsa_dict[router]
                     min_id = router
-            
-            if not min_router:
+
+            if min_router is None:
                 break
-            
+
             for router, dst in min_router.items():
                 if dst + distances[min_id] < distances[router]:
                     distances[router] = dst + distances[min_id]
                     if min_id in self.links.keys():
                         self.fwd_table[router] = min_id
-            
+
             not_visited.remove(min_id)
-            current_router = min_router
 
         self.routes_computed = True
-            
-
 
 
         
