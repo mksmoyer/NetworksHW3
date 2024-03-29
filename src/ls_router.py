@@ -43,10 +43,9 @@ class LSRouter(Router):
             self.routes_computed = True
             return
         elif self.clock.read_tick() < BROADCAST_INTERVAL:
-           
-           
             # TODO: Go through the LSAs received so far.
-            
+
+
             for router, ad in self.lsa_dict.items():
                 if not router in self.broadcasted.keys() or self.broadcasted[router] == False:
                     for neighbor in self.neighbors:
@@ -66,6 +65,42 @@ class LSRouter(Router):
 
     def dijkstras_algorithm(self):
         # TODO:
+
+        not_visited = list(self.lsa_dict.keys())
+        distances = {router: float('inf') for router in self.lsa_dict.keys()}
+        distances[self.router_id] = 0
+
+        for router in self.links.keys():
+            self.fwd_table[router] = router
+
+        while len(not_visited) > 0:
+            min_distance = float('inf')
+            min_router = None
+            min_id = None
+            for router in not_visited:
+                if distances[router] < min_distance:
+                    min_distance = distances[router]
+                    min_router = self.lsa_dict[router]
+                    min_id = router
+
+            if min_router is None:
+                break
+
+            for router, dst in min_router.items():
+                if dst + distances[min_id] < distances[router]:
+                    distances[router] = dst + distances[min_id]
+                    if min_id in self.lsa_dict.keys():
+                        self.fwd_table[router] = min_id
+
+            not_visited.remove(min_id)
+
+            print (not_visited)
+            
+        self.routes_computed = True
+
+
+        
+        
 
         # (1) Implement Dijkstra's single-source shortest path algorithm
         # to find the shortest paths from this router to all other destinations in the network.
